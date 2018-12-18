@@ -28,10 +28,10 @@ struct subset
 	int rank;
 };
 
-int find(struct subset subsets[], int i);
-void Union(struct subset subsets[], int x, int y);
+int find(struct subset subsets[], int i, int &countOp);
+void Union(struct subset subsets[], int x, int y, int &countOp);
 void boruvkaMST(struct Graph* graph);
 struct Graph* createGraph(int V, int E);
 void test(int initCountV, int delta, int finCountV, int deltaE);
-int find(struct subset subsets[], int i);
-void Union(struct subset subsets[], int x, int y);
+struct Graph* generator(int V, int E, struct Graph* graph);
+void test2(int initCountV, int E, int deltaE);

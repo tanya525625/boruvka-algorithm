@@ -2,11 +2,17 @@
 
 int main()
 {
-	int initCountV = 100;
-	int delta = 100;
-	int finCountV = 1000;
-	int deltaE = 100;
+	int initCountV = 1000;
+	int finCountV = 1100;
+	int n = 10;
+	int delta = (finCountV-initCountV)/n;
+	int deltaE = 3000;
 	test(initCountV, delta, finCountV, deltaE);
+	//cout << "HI" << endl;
+	/*int V = 1000;
+	int E = 15000;
+	int delta = 10000;
+	test2(V, E, delta);*/
 	
 	system("pause");
 	return 0;
