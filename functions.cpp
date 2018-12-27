@@ -38,7 +38,6 @@ void boruvkaMST(struct Graph* graph)
 
 	// Цикл объединения компонент будет происходить до тех пор, 
 	// пока все компоненты не объединятся в единое дерево 
-	clock_t start = clock();
 	while (numTrees > 1)
 	{
 		for (int v = 0; v < V; ++v)
@@ -53,13 +52,14 @@ void boruvkaMST(struct Graph* graph)
 			// Определение принадлежности к компоненте 
 			int set1 = find(subsets, edge[i].src, countOp);
 			int set2 = find(subsets, edge[i].dest, countOp);
-			countOp += 3;
+			countOp += 2;
 			// Если принадлежат единой компоненте
 			// Не рассматриваем данный случай
 
 			if (set1 == set2)
+			{
 				continue;
-			//countOp += 3;
+			}
 			// Иначе смотрим, является ли текущее ребро
 			// ребром с меньшим весом, чем предыдущие
 			else
@@ -68,16 +68,19 @@ void boruvkaMST(struct Graph* graph)
 					edge[cheapest[set1]].weight > edge[i].weight)
 				{
 					cheapest[set1] = i;
+					countOp ++; 
 				}
 					
-
 				if (cheapest[set2] == -1 ||
 					edge[cheapest[set2]].weight > edge[i].weight)
+				{
 					cheapest[set2] = i;
+					countOp++;
+				}
+				countOp += 6; //Проверка сравнений и логического или 
 			}
-			countOp += 5;
 		}
-
+		countOp++; // Проверка if (set1 == set2)
 		// Добавление ребер с наименьшим весом в дерево
 		for (int i = 0; i < V; i++)
 		{
@@ -94,12 +97,12 @@ void boruvkaMST(struct Graph* graph)
 				// Объединение компонент и уменьшение количества деревьев
 				Union(subsets, set1, set2, countOp);
 				numTrees--;
-				countOp += 6;
+				countOp += 5;
 			}
+			countOp += 2; //сравнение и инкремирование i в цикле for
+			countOp++; //if (cheapest[i] != -1)
 		}
 	}
-	clock_t end = clock();
-	//cout << end - start << " ";
 	cout << countOp << " " ;
 	//cout << "Weight of MST is " << MSTweight << endl;
 	return;
@@ -110,11 +113,10 @@ int find(struct subset subsets[], int i, int &countOp)
 {
 	if (subsets[i].parent != i)
 	{
-		countOp+=2;
-		subsets[i].parent =
-			find(subsets, subsets[i].parent, countOp);
+		subsets[i].parent = find(subsets, subsets[i].parent, countOp);
+		countOp += 1;
 	}
-		
+	countOp += 1;
 	
 	return subsets[i].parent;
 }
@@ -128,17 +130,23 @@ void Union(struct subset subsets[], int x, int y, int &countOp)
 	// Объединение по рангу
 	if (subsets[xroot].rank < subsets[yroot].rank)
 		subsets[xroot].parent = yroot;
-	else if (subsets[xroot].rank > subsets[yroot].rank)
-		subsets[yroot].parent = xroot;
-	
-	// Если ранги равны
-	// Выбор одного из них в качестве корня, увеличение ранга
 	else
 	{
-		subsets[yroot].parent = xroot;
-		subsets[xroot].rank++;
+		countOp += 1;
+		if (subsets[xroot].rank > subsets[yroot].rank)
+		{
+			subsets[yroot].parent = xroot;
+			countOp += 1;
+		}
+		else
+		{
+			subsets[yroot].parent = xroot;
+			subsets[xroot].rank++;
+			countOp += 2;
+		}
 	}
-	countOp += 3;
+	
+	countOp += 1; // Первый if
 }
 
 struct Graph* generator(int V, int E, struct Graph* graph)
